@@ -33,8 +33,17 @@ export default function Poem() {
 
   const handleCheckboxChange = (index) => {
     const updatedCheckedItems = [...checkedItems];
-    updatedCheckedItems[index] = !updatedCheckedItems[index];
-    setCheckedItems(updatedCheckedItems);
+
+    // Count the number of checked checkboxes
+    const checkedCount = updatedCheckedItems.filter(item => item).length;
+
+    // Allow checking/unchecking if the limit hasn't been reached or if unchecking
+    if (checkedCount < 2 || updatedCheckedItems[index]) {
+      updatedCheckedItems[index] = !updatedCheckedItems[index];
+      setCheckedItems(updatedCheckedItems);
+    } else {
+      alert("You can only select a maximum of two options.");
+    }
   };
 
   const handleOtherCheckboxChange = () => {
@@ -48,6 +57,13 @@ export default function Poem() {
   const handleSubmit = () => {
     setShowConfetti(true);
     setShowMessage(true);
+
+    const selections = {
+      checkedItems,
+      otherChecked,
+      otherText,
+    };
+    console.log("Form submission:", selections);
   };
 
   return (
@@ -65,13 +81,11 @@ export default function Poem() {
                 checked={checkedItems[index]}
                 onChange={() => handleCheckboxChange(index)}
               />
-              <span className="custom-checkbox"></span>
               {line}
             </label>
           </div>
         ))}
 
-        {/* "Other" option separated from the list */}
         <div className="custom-checkbox" style={{ marginBottom: "10px" }}>
           <label style={{ display: "inline-flex", alignItems: "center" }}>
             <input
@@ -83,7 +97,6 @@ export default function Poem() {
           </label>
           {otherChecked && (
             <textarea
-              type="text"
               value={otherText}
               onChange={handleOtherTextChange}
               placeholder="Specify other..."
